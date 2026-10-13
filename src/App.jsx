@@ -1,10 +1,12 @@
-import react from 'react'
+import react from "react";
+import RegisterForm from "./components/RegisterForm.jsx";
 
 function App() {
-
   return (
-   <h1> Hello there </h1>
-  )
+    <div>
+      <RegisterForm />
+    </div>
+  );
 }
 
-export default App
+export default App;
