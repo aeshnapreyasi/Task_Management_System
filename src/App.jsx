@@ -1,10 +1,10 @@
 import react from "react";
-import RegisterForm from "./components/RegisterForm.jsx";
+import AppRouter from "./router/AppRouter.jsx";
 
 function App() {
   return (
     <div>
-      <RegisterForm />
+      <AppRouter/>
     </div>
   );
 }

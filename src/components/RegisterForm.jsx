@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function RegisterForm() {
   const [message, setMessage] = useState("");
@@ -30,7 +31,7 @@ function RegisterForm() {
         body: JSON.stringify({ email, password }),
       });
       const result = await response.json();
-      console.log(result); 
+      console.log(result);
 
       if (!response.ok) {
         throw new Error(result.message || "Unable to create account.");
@@ -111,8 +112,16 @@ function RegisterForm() {
                 />
               </div>
               <div className="flex items-start"></div>
-              {error && <p className="text-sm text-red-600" role="alert">{error}</p>}
-              {message && <p className="text-sm text-green-600" role="status">{message}</p>}
+              {error && (
+                <p className="text-sm text-red-600" role="alert">
+                  {error}
+                </p>
+              )}
+              {message && (
+                <p className="text-sm text-green-600" role="status">
+                  {message}
+                </p>
+              )}
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -122,12 +131,12 @@ function RegisterForm() {
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Already have an account?{" "}
-                <a
-                  href="#"
+                <Link
+                  to="/login"
                   className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >
                   Login here
-                </a>
+                </Link>
               </p>
             </form>
           </div>
