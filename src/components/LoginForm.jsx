@@ -20,24 +20,38 @@ export default function LoginForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      const loginResult = await response.json();
 
-      if (!response.ok) {
-        setError(loginResult.message || "Invalid credentials.");
+      // 1. Agar rate limit hit hui hai (429 Error)
+      if (response.status === 429) {
+        // Bahut baar express-rate-limit default text bhejta hai, isliye safe-side text read karein ya check karein
+        const rateLimitText = await response.text();
+        try {
+          const rateLimitJson = JSON.parse(rateLimitText);
+          setError(
+            rateLimitJson.error || "Too many attempts. Please try again later.",
+          );
+        } catch (e) {
+          setError(
+            rateLimitText || "Too many attempts. Please try again later.",
+          );
+        }
         return;
       }
 
-      // if (!loginResult.token) {
-      //   throw new Error(
-      //     "The login response did not include an authentication token.",
-      //   );
-      // }
+      // 2. Agar normal login fail hua hai (Jaise wrong email/password - 401 ya 400)
+      if (!response.ok) {
+        const errorResult = await response.json();
+        setError(errorResult.message || "Invalid credentials.");
+        return;
+      }
+
+      // 3. if response is correct then return 201
+      const loginResult = await response.json();
+      console.log(loginResult);
 
       const userResponse = await fetch("/api/auth/me", {
         credentials: "include",
-        headers: {
-          "Content-Type" : "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       });
       const userResult = await userResponse.json();
 
@@ -45,9 +59,9 @@ export default function LoginForm() {
         throw new Error(userResult.message || "Unable to verify your login.");
       }
 
-      // sessionStorage.setItem("token", loginResult.token);
       navigate("/home");
     } catch (submitError) {
+      // if server is down then show this message
       setError(submitError.message || "Unable to connect to the server.");
     } finally {
       setLoading(false);

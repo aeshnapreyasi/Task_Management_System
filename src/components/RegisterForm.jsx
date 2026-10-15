@@ -34,7 +34,9 @@ function RegisterForm() {
       console.log(result);
 
       if (!response.ok) {
-        throw new Error(result.message || "Unable to create account.");
+        throw new Error(
+          result.error || result.message || "Unable to create account.",
+        );
       }
 
       setMessage(result.message);
