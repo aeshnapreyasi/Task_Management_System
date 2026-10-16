@@ -59,7 +59,7 @@ export default function LoginForm() {
         throw new Error(userResult.message || "Unable to verify your login.");
       }
 
-      navigate("/home");
+      navigate("/dashboard");
     } catch (submitError) {
       // if server is down then show this message
       setError(submitError.message || "Unable to connect to the server.");
