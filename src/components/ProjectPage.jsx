@@ -1,7 +1,6 @@
-
 import { useCallback, useEffect, useState } from "react";
 
-const API_URL = "http://localhost:3000/api/projects";
+// const http://localhost:3000/api/projects = "http://localhost:3000/api/projects";
 
 export default function ProjectPage() {
   const [projects, setProjects] = useState([]);
@@ -20,12 +19,13 @@ export default function ProjectPage() {
     try {
       setError("");
 
-      const response = await fetch(API_URL, {
+      const response = await fetch("/api/projects", {
         method: "GET",
         credentials: "include",
       });
 
       const data = await response.json();
+      console.log(data);
 
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch projects");
@@ -83,8 +83,8 @@ export default function ProjectPage() {
 
       const response = await fetch(
         isEditing
-          ? `${API_URL}/${editingProject.id}`
-          : API_URL,
+          ? `${"/api/projects"}/${editingProject.id}`
+          : "/api/projects",
         {
           method: isEditing ? "PUT" : "POST",
           credentials: "include",
@@ -95,7 +95,7 @@ export default function ProjectPage() {
             name: name.trim(),
             description: description.trim(),
           }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -103,7 +103,7 @@ export default function ProjectPage() {
       if (!response.ok) {
         throw new Error(
           data.message ||
-            `Failed to ${isEditing ? "update" : "create"} project`
+            `Failed to ${isEditing ? "update" : "create"} project`,
         );
       }
 
@@ -122,7 +122,7 @@ export default function ProjectPage() {
 
   async function handleDelete(project) {
     const confirmed = window.confirm(
-      `Are you sure you want to delete "${project.name}"?`
+      `Are you sure you want to delete "${project.name}"?`,
     );
 
     if (!confirmed) return;
@@ -131,7 +131,7 @@ export default function ProjectPage() {
       setDeletingId(project.id);
       setError("");
 
-      const response = await fetch(`${API_URL}/${project.id}`, {
+      const response = await fetch(`${"/api/projects"}/${project.id}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -159,9 +159,7 @@ export default function ProjectPage() {
               Workspace
             </p>
 
-            <h1 className="text-3xl font-bold sm:text-4xl">
-              Your Projects
-            </h1>
+            <h1 className="text-3xl font-bold sm:text-4xl">Your Projects</h1>
 
             <p className="mt-2 text-gray-400">
               Manage your projects and keep your work organized.
@@ -187,22 +185,18 @@ export default function ProjectPage() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-[#303136] bg-[#1C1D21] p-5">
+          {/* <div className="rounded-2xl border border-[#303136] bg-[#1C1D21] p-5">
             <p className="text-sm text-gray-400">Task Progress</p>
             <p className="mt-2 text-xl font-bold">Coming soon</p>
             <p className="mt-1 text-sm text-gray-500">
-              Progress tracking will be available with tasks.
+              
             </p>
-          </div>
+          </div> */}
         </section>
 
         <section>
           <div className="mb-5 flex items-center justify-between gap-3">
             <h2 className="text-xl font-bold">All Projects</h2>
-
-            <span className="rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-sm text-violet-300">
-              {projects.length} projects
-            </span>
           </div>
 
           {loading ? (
@@ -251,11 +245,11 @@ export default function ProjectPage() {
                     </span>
                   </div>
 
-                  <h3 className="break-words text-xl font-bold">
+                  <h3 className="wrap-break-words text-xl font-bold">
                     {project.name}
                   </h3>
 
-                  <p className="mt-2 min-h-12 break-words text-sm leading-6 text-gray-400">
+                  <p className="mt-2 min-h-12 wrap-break-words text-sm leading-6 text-gray-400">
                     {project.description || "No description added yet."}
                   </p>
 
@@ -264,9 +258,7 @@ export default function ProjectPage() {
                       <span className="text-sm text-gray-300">
                         Task progress
                       </span>
-                      <span className="text-xs text-gray-500">
-                        Coming soon
-                      </span>
+                      <span className="text-xs text-gray-500">Coming soon</span>
                     </div>
 
                     <div className="h-2 overflow-hidden rounded-full bg-[#303136]" />
@@ -312,10 +304,7 @@ export default function ProjectPage() {
           >
             <div className="mb-6 flex items-center justify-between">
               <div>
-                <h2
-                  id="project-modal-title"
-                  className="text-2xl font-bold"
-                >
+                <h2 id="project-modal-title" className="text-2xl font-bold">
                   {editingProject ? "Update Project" : "Create Project"}
                 </h2>
                 <p className="mt-1 text-sm text-gray-400">
