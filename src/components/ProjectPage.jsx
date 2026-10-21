@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useOutletContext, useNavigate } from "react-router-dom";
 
 // const http://localhost:3000/api/projects = "http://localhost:3000/api/projects";
 
@@ -14,6 +15,9 @@ export default function ProjectPage() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [formError, setFormError] = useState("");
+
+  const user = useOutletContext(); // this will help to get the name of logged in user
+  const navigate = useNavigate(); // this will help to land on the login page, after logout
 
   const fetchProjects = useCallback(async () => {
     try {
@@ -82,9 +86,7 @@ export default function ProjectPage() {
       const isEditing = Boolean(editingProject);
 
       const response = await fetch(
-        isEditing
-          ? `${"/api/projects"}/${editingProject.id}`
-          : "/api/projects",
+        isEditing ? `${"/api/projects"}/${editingProject.id}` : "/api/projects",
         {
           method: isEditing ? "PUT" : "POST",
           credentials: "include",
@@ -150,6 +152,23 @@ export default function ProjectPage() {
     }
   }
 
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error("Logout failed. Please try again later!");
+      }
+
+      navigate("/login", { replace: true });
+    } catch (error) {
+      console.log("Logout error:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#111214] px-4 py-8 text-white sm:px-8 lg:px-12">
       <div className="mx-auto max-w-7xl">
@@ -166,14 +185,32 @@ export default function ProjectPage() {
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={openCreateModal}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 py-3 font-semibold transition hover:bg-violet-500"
-          >
-            <span className="text-xl">+</span>
-            New Project
-          </button>
+          <div className="felx felx-wrap items-center gap-3">
+            <div className="flex items-center gap-3 rouded-xl border border-white/10 bg-[#1b1c20] px-4 py-2.5">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-600 font-bold text-white">
+                {user?.name?.charAt(0)?.toUpperCase() || "U"}
+              </div>
+
+              <p className="font-medium text-white">{user?.name || "User"}</p>
+            </div>
+
+            <button
+              type="button"
+              onClick={openCreateModal}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 py-3 font-semibold transition hover:bg-violet-500"
+            >
+              <span className="text-xl">+</span>
+              New Project
+            </button>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="rounded-xl border border-white/10 px-5 py-3 font-semibold text-gray-300 transition hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-400"
+            >
+              Logout
+            </button>
+          </div>
         </header>
 
         <section className="mb-9 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -184,14 +221,6 @@ export default function ProjectPage() {
               Projects in your workspace
             </p>
           </div>
-
-          {/* <div className="rounded-2xl border border-[#303136] bg-[#1C1D21] p-5">
-            <p className="text-sm text-gray-400">Task Progress</p>
-            <p className="mt-2 text-xl font-bold">Coming soon</p>
-            <p className="mt-1 text-sm text-gray-500">
-              
-            </p>
-          </div> */}
         </section>
 
         <section>
