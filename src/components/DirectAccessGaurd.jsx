@@ -9,7 +9,10 @@ const DirectAccessGarud = () => {
   useEffect(() => {
     let cancelled = false;
 
-    async function loadCurrentUser() {
+    // 8398891092
+    // pramod@logiedgesystems.com
+
+    async function loadCurrentUser() {  
       try {
         const response = await fetch("/api/auth/me", {
           credentials: "include",
