@@ -9,7 +9,7 @@ const DirectAccessGarud = () => {
   useEffect(() => {
     let cancelled = false;
 
-    async function loadCurrentUser() {
+    async function loadCurrentUser() {  
       try {
         const response = await fetch("/api/auth/me", {
           credentials: "include",

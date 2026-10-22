@@ -9,6 +9,8 @@ export default function ProjectPage() {
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
+  const [employees, setEmployees] = useState([]); //store the employee
+  const [selectedEmployee, setSelectedEmployee] = useState(""); // store the id of the selected employee id
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
@@ -17,6 +19,7 @@ export default function ProjectPage() {
   const [formError, setFormError] = useState("");
 
   const user = useOutletContext(); // this will help to get the name of logged in user
+  const isManager = user?.role === "MANAGER"; // it will true if the logged in user is manager
   const navigate = useNavigate(); // this will help to land on the login page, after logout
 
   const fetchProjects = useCallback(async () => {
@@ -47,6 +50,32 @@ export default function ProjectPage() {
     fetchProjects();
   }, [fetchProjects]);
 
+  useEffect(() => {
+    if (!isManager) return;
+
+    async function fetchEmployee() {
+      try {
+        const response = await fetch(
+          "http://localhost:3000/api/projects/employees",
+          {
+            method: "GET",
+            credentials: "include",
+          },
+        );
+
+        const result = await response.json();
+        console.log("Employee result:", result);
+
+        if (response.ok) {
+          setEmployees(result.employees);
+        }
+      } catch (error) {
+        console.error("Error fetching employees:", error);
+      }
+    }
+    fetchEmployee();
+  }, [isManager]);
+
   function openCreateModal() {
     setEditingProject(null);
     setName("");
@@ -59,6 +88,7 @@ export default function ProjectPage() {
     setEditingProject(project);
     setName(project.name);
     setDescription(project.description || "");
+    setSelectedEmployee(project.userId || "");
     setFormError("");
     setIsModalOpen(true);
   }
@@ -96,6 +126,7 @@ export default function ProjectPage() {
           body: JSON.stringify({
             name: name.trim(),
             description: description.trim(),
+            userId: selectedEmployee,
           }),
         },
       );
@@ -194,14 +225,16 @@ export default function ProjectPage() {
               <p className="font-medium text-white">{user?.name || "User"}</p>
             </div>
 
-            <button
-              type="button"
-              onClick={openCreateModal}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 py-3 font-semibold transition hover:bg-violet-500"
-            >
-              <span className="text-xl">+</span>
-              New Project
-            </button>
+            {isManager && (
+              <button
+                type="button"
+                onClick={openCreateModal}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 py-3 font-semibold transition hover:bg-violet-500"
+              >
+                <span className="text-xl">+</span>
+                New Project
+              </button>
+            )}
 
             <button
               type="button"
@@ -374,6 +407,30 @@ export default function ProjectPage() {
                   className="w-full rounded-xl border border-[#383941] bg-[#111214] px-4 py-3 text-white outline-none placeholder:text-gray-500 focus:border-violet-500"
                 />
               </div>
+
+              {/* to add employee along with adding project  */}
+              {isManager && (
+                <div>
+                  <label className="mb-2 block text-sm text-gray-300">
+                    Assign to Employee
+                  </label>
+
+                  <select
+                    value={selectedEmployee}
+                    onChange={(e) => setSelectedEmployee(e.target.value)}
+                    required
+                    className="w-full rounded-lg border-gray-700 bg-[#111214] p-3 text-white"
+                  >
+                    <option value=""> Select an employee</option>
+
+                    {employees.map((employee) => (
+                      <option key={employee.id} value={employee.id}>
+                        {employee.name} ({employee.email})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div>
                 <label
