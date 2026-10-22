@@ -50,13 +50,14 @@ export default function ProjectPage() {
     fetchProjects();
   }, [fetchProjects]);
 
-  useEffect(()=> {
-    if(!isManager) return;
+  useEffect(() => {
+    if (!isManager) return;
 
     async function fetchEmployee() {
-      try{
-        const response = await fetch (
-          "http://localhost:3000/api/projects/employees",{
+      try {
+        const response = await fetch(
+          "http://localhost:3000/api/projects/employees",
+          {
             method: "GET",
             credentials: "include",
           },
@@ -65,10 +66,10 @@ export default function ProjectPage() {
         const result = await response.json();
         console.log("Employee result:", result);
 
-        if(response.ok){
+        if (response.ok) {
           setEmployees(result.employees);
         }
-      } catch(error) {
+      } catch (error) {
         console.error("Error fetching employees:", error);
       }
     }
@@ -224,16 +225,15 @@ export default function ProjectPage() {
               <p className="font-medium text-white">{user?.name || "User"}</p>
             </div>
 
-          {isManager && (
-
-            <button
-              type="button"
-              onClick={openCreateModal}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 py-3 font-semibold transition hover:bg-violet-500"
-            >
-              <span className="text-xl">+</span>
-              New Project
-            </button>
+            {isManager && (
+              <button
+                type="button"
+                onClick={openCreateModal}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 py-3 font-semibold transition hover:bg-violet-500"
+              >
+                <span className="text-xl">+</span>
+                New Project
+              </button>
             )}
 
             <button
@@ -406,7 +406,7 @@ export default function ProjectPage() {
                   required
                   className="w-full rounded-xl border border-[#383941] bg-[#111214] px-4 py-3 text-white outline-none placeholder:text-gray-500 focus:border-violet-500"
                 />
-              </div> 
+              </div>
 
               {/* to add employee along with adding project  */}
               {isManager && (
@@ -416,10 +416,11 @@ export default function ProjectPage() {
                   </label>
 
                   <select
-                  value={selectedEmployee}
-                  onChange={(e) => setSelectedEmployee(e.target.value)}
-                  required
-                  className="w-full rounded-lg border-gray-700 bg-[#111214] p-3 text-white">
+                    value={selectedEmployee}
+                    onChange={(e) => setSelectedEmployee(e.target.value)}
+                    required
+                    className="w-full rounded-lg border-gray-700 bg-[#111214] p-3 text-white"
+                  >
                     <option value=""> Select an employee</option>
 
                     {employees.map((employee) => (
