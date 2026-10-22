@@ -56,12 +56,14 @@ export default function ProjectPage() {
     async function fetchEmployee() {
       try{
         const response = await fetch (
-          "http://localhost:5000/api/projects/employees",{
+          "http://localhost:3000/api/projects/employees",{
+            method: "GET",
             credentials: "include",
           },
         );
 
         const result = await response.json();
+        console.log("Employee result:", result);
 
         if(response.ok){
           setEmployees(result.employees);
@@ -85,6 +87,7 @@ export default function ProjectPage() {
     setEditingProject(project);
     setName(project.name);
     setDescription(project.description || "");
+    setSelectedEmployee(project.userId || "");
     setFormError("");
     setIsModalOpen(true);
   }
