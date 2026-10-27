@@ -21,9 +21,9 @@ export default function LoginForm() {
         body: JSON.stringify({ email, password }),
       });
 
-      // 1. Agar rate limit hit hui hai (429 Error)
+     // if rate limit hits it limit
       if (response.status === 429) {
-        // Bahut baar express-rate-limit default text bhejta hai, isliye safe-side text read karein ya check karein
+       
         const rateLimitText = await response.text();
         try {
           const rateLimitJson = JSON.parse(rateLimitText);
@@ -38,7 +38,7 @@ export default function LoginForm() {
         return;
       }
 
-      // 2. Agar normal login fail hua hai (Jaise wrong email/password - 401 ya 400)
+      //if normal logged-in failed
       if (!response.ok) {
         const errorResult = await response.json();
         setError(errorResult.message || "Invalid credentials.");
@@ -59,7 +59,7 @@ export default function LoginForm() {
         throw new Error(userResult.message || "Unable to verify your login.");
       }
 
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     } catch (submitError) {
       // if server is down then show this message
       setError(submitError.message || "Unable to connect to the server.");

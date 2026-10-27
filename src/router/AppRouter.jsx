@@ -1,8 +1,9 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import RegisterForm from "../components/RegisterForm";
 import LoginForm from "../components/LoginForm";
 import ProjectPage from "../components/ProjectPage";
-import DirectAccessGuard from "../components/DirectAccessGaurd"; // NEW: Import guard
+import DirectAccessGuard from "../components/DirectAccessGaurd";
 
 function AppRouter() {
   return (
@@ -16,16 +17,13 @@ function AppRouter() {
           <Route element={<DirectAccessGuard />}>
             <Route path="/dashboard" element={<ProjectPage />} />
           </Route>
+
+          {/* Redirect unknown URLs to login */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>
     </BrowserRouter>
   );
-}
-
-function NotFoundRedirect() {
-  return <Navigate to = "/dashboard" replace />;
-  <Route path="*" element = {<NotFoundRedirect />} />
-  
 }
 
 export default AppRouter;

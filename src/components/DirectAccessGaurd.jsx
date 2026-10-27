@@ -9,7 +9,7 @@ const DirectAccessGarud = () => {
   useEffect(() => {
     let cancelled = false;
 
-    async function loadCurrentUser() {  
+    async function loadCurrentUser() {
       try {
         const response = await fetch("/api/auth/me", {
           credentials: "include",
@@ -23,9 +23,7 @@ const DirectAccessGarud = () => {
         const result = await response.json();
 
         if (!response.ok) {
-          throw new Error(
-            result.message || "Could not load your account."
-          );
+          throw new Error(result.message || "Could not load your account.");
         }
 
         // NEW: Save the authenticated user's details
@@ -34,9 +32,7 @@ const DirectAccessGarud = () => {
         }
       } catch (requestError) {
         if (!cancelled) {
-          setError(
-            requestError.message || "Could not connect to the server."
-          );
+          setError(requestError.message || "Could not connect to the server.");
         }
       } finally {
         if (!cancelled) {
@@ -53,8 +49,8 @@ const DirectAccessGarud = () => {
   }, []);
 
   if (loading) return <p>Checking your login...</p>;
-  if (error) return <p role="alert">{error}</p>;
-  if (!user) return <Navigate to="/login" replace />;
+  if (error || !user) return <Navigate to="/login" replace />;
+  // if (!user) return <Navigate to="/login" replace />;
 
   return <Outlet context={user} />;
 };
